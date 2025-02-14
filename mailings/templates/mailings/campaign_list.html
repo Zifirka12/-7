@@ -1,0 +1,48 @@
+{% extends 'clients/base.html' %}
+
+{% block content %}
+
+<div class="album py-5 bg-body-tertiary">
+
+    <div class="container">
+        <div class="row text-center mb-4">
+            <a class="btn btn-primary btn-md" href="{% url 'mailings:campaign_create' %}" role="button">Создать новую рассылку</a>
+        </div>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 g-2">
+
+            {% for mailings in object_list %}
+
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ mailings.message.topic }}</h4>
+                            <p class="card-text">{{ mailings.message.body|slice:":100" }}{% if mailings.message.body|length > 100 %}...{% endif %}</p>
+                            <p class="card-text">Получатели:
+                            {% for recipient in mailings.recipients.all %}
+                                {{ recipient.email }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    {% if user.is_superuser %}
+                                    <a class="btn btn-secondary" href="{% url 'mailings:campaign_update' mailings.pk %}"
+                                       role="button">Изменить</a>
+                                    <a class="btn btn-secondary" href="{% url 'mailings:campaign_delete' mailings.pk %}"
+                                       role="button">Удалить</a>
+                                    {% endif %}
+                                    {% if perms.mailings.can_disable_mailing and not user.is_superuser %}
+                                    <a class="btn btn-secondary" href="{% url 'mailings:campaign_update' mailings.pk %}" role="button">Статус</a>
+                                    {% endif %}
+                                    <a class="btn btn-primary" href="{% url 'mailings:campaign_detail' mailings.pk %}"
+                                       role="button">Просмотреть</a>
+                                </div>
+                                <small class="text-body-secondary">{{ mailings.first_sent_time|date:"F j, Y" }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

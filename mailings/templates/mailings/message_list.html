@@ -1,0 +1,40 @@
+{% extends 'clients/base.html' %}
+{% block content %}
+
+<div class="album py-5 bg-body-tertiary">
+
+    <div class="container">
+            <div class="row text-center mb-4">
+                <a class="btn btn-primary btn-md" href="{% url 'mailings:message_create' %}" role="button">Создать</a>
+            </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+            {% for mailings in object_list %}
+
+            <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title"> {{ mailings.topic }} </h4>
+                        <p class="card-text"> {{ mailings.body|slice:":100" }}{% if mailings.body|length > 100 %}...{% endif %} </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                {% if user.is_superuser %}
+                                <a class="btn btn-secondary" href="{% url 'mailings:message_update' mailings.pk %}"
+                                   role="button">Изменить</a>
+                                <a class="btn btn-secondary" href="{% url 'mailings:message_delete' mailings.pk %}"
+                                   role="button">Ремуф</a>
+                                {% endif %}
+                                <a class="btn btn-primary" href="{% url 'mailings:message_detail' mailings.pk %}"
+                                   role="button">Гадить</a>
+                            </div>
+                            <small class="text-body-secondary"> {{ mailings.created_at }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
